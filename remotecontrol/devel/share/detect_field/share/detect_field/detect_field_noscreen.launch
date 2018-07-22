@@ -1,0 +1,42 @@
+<launch>
+  <node name="cam_startsignal" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="480" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="framerate" type="int" value="10" />
+    <param name="buffer_size" type="int" value="52428800" />
+    <param name="camera_frame_id" value="cam_startsignal" />
+    <param name="io_method" value="mmap"/>
+  </node>
+  <node name="cam_forward" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video1" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="480" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="framerate" type="int" value="10" />
+    <param name="buffer_size" type="int" value="52428800" />
+    <param name="camera_frame_id" value="cam_forward" />
+    <param name="io_method" value="mmap"/>
+  </node>
+  <node name="view_startsignal" pkg="image_view" type="image_view" respawn="false" output="screen">
+    <remap from="image" to="/cam_startsignal/image_raw"/>
+    <param name="autosize" value="true" />
+  </node>
+  <node name="view_forward" pkg="image_view" type="image_view" respawn="false" output="screen">
+    <remap from="image" to="/cam_forward/image_raw"/>
+    <param name="autosize" value="true" />
+  </node>
+  <node name="detect_clockstart" pkg="detect_field" type="detect_clockstart.py" output="screen">
+  </node>
+  <node name="detect_redlines" pkg="detect_field" type="detect_redlines.py" output="screen">
+  </node>
+  <node name="saw_startsignal" pkg="detect_field" type="saw_startsignal.py" output="screen">
+  </node>
+  <node name="rqt_console" pkg="rqt_console" type="rqt_console" output="screen">
+  </node>
+  <node name="rqt_graph" pkg="rqt_graph" type="rqt_graph" output="screen">
+  </node>
+  <node name="rqt_logger_level" pkg="rqt_logger_level" type="rqt_logger_level" output="screen">
+  </node>
+</launch>

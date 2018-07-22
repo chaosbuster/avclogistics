@@ -1,0 +1,8 @@
+prefix=/home/jeanette/catkin_ws/devel
+
+Name: detect_field
+Description: Description of detect_field
+Version: 0.0.0
+Cflags: -I/home/jeanette/catkin_ws/devel/include
+Libs: -L/home/jeanette/catkin_ws/devel/lib 
+Requires: message_runtime roscpp rospy std_msgs usb_cam cv_bridge sensor_msgs geometry_msgs

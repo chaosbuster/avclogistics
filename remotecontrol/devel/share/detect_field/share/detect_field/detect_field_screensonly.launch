@@ -1,0 +1,8 @@
+<launch>
+  <node name="rqt_console" pkg="rqt_console" type="rqt_console" output="screen">
+  </node>
+  <node name="rqt_graph" pkg="rqt_graph" type="rqt_graph" output="screen">
+  </node>
+  <node name="rqt_logger_level" pkg="rqt_logger_level" type="rqt_logger_level" output="screen">
+  </node>
+</launch>
