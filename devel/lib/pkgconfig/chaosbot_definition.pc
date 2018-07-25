@@ -1,0 +1,8 @@
+prefix=/home/chaos/avclogistics/devel
+
+Name: chaosbot_definition
+Description: Description of chaosbot_definition
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/chaos/avclogistics/devel/lib 
+Requires: 
