@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <name>bot_definition</name>
+  <version>0.0.0</version>
+  <description>The description package for chaosbot</description>
+
+  <maintainer email="jeanette@techno-chaos.com">Dave Coleman</maintainer>
+
+  <license>BSD</license>
+
+  <author email="davetcoleman@gmail.com">Dave Coleman</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>joint_state_publisher</run_depend>
+  <run_depend>robot_state_publisher</run_depend>
+  <run_depend>rviz</run_depend>
+
+  <export>
+  </export>
+</package>
