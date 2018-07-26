@@ -1,0 +1,7 @@
+<launch>
+  <node name="joy" pkg="joy" type="joy_node" output="screen">
+  </node>
+  <node name="joystick_translator" pkg="chaosbot_teleop" type="joystick_translator.py" output="screen">
+  </node>
+</launch>
+
