@@ -1,0 +1,7 @@
+<launch>
+  <node name="setautonomousmode" pkg="autonomous_controller" type="setautonomousmode.py" output="screen">
+  </node>
+  <node name="setautonomousgoal" pkg="autonomous_controller" type="setautonomousgoal.py" output="screen">
+  </node>
+</launch>
+
