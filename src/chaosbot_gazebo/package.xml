@@ -1,0 +1,22 @@
+<package>
+  <name>chaosbot_gazebo</name>
+  <version>0.1.0</version>
+  <description>Package that connects our chaosbot into Gazebo</description>
+  <maintainer email="jeanette@techno-chaos.com">Jeanette Breton</maintainer>
+
+  <license>BSD</license>
+
+  <author email="jeanette@techno-chaos.com">Jeanette Breton</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>gazebo_plugins</run_depend>
+  <run_depend>gazebo_ros</run_depend>
+  <run_depend>gazebo_ros_control</run_depend>
+  <run_depend>chaosbot_control</run_depend>
+  <run_depend>chaosbot_description</run_depend>
+  <run_depend>xacro</run_depend>
+
+  <export>
+  </export>
+</package>

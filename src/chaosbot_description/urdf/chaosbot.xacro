@@ -1,0 +1,309 @@
+<?xml version="1.0"?>
+
+<!-- chaosbot: Robot for 2018 SparkFun AVC Challenge in the Logisitics Class category -->
+<!--           Following some of the design elements from OSRF's Car Demo project with a Prius -->
+<robot name="chaosbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Constants for robot dimensions -->
+  <xacro:property name="PI" value="3.1415926535897931"/>
+  <xacro:property name="mass" value="1" /> <!-- arbitrary value for mass -->
+  <xacro:property name="width_chassis" value="0.12" /> <!-- Rectangular dimensions (widthxdepth) of chassis -->
+  <xacro:property name="depth_chassis" value="0.4" /> <!-- Rectangular dimensions (widthxdepth) of chassis -->
+  <xacro:property name="height_chassis" value="0.1" /> <!-- Robot chassis -->
+  <xacro:property name="length_wheelaxle" value="0.22" /> <!-- Dimensions (lengthxradius) of wheel axles -->
+  <xacro:property name="radius_wheelaxle" value="0.005" /> <!-- Rectangular dimensions (lengthxradius) of chassis -->
+  <xacro:property name="width_wheel" value="0.065" /> <!-- Dimensions (widthxradius) of wheels -->
+  <xacro:property name="radius_wheel" value="0.0325" /> <!-- Dimension (widthxradius) of wheels -->
+
+  <xacro:property name="width_beams" value="0.1" /> <!-- Square dimensions (widthxwidth) of beams -->
+  <xacro:property name="height_chest" value="2" /> <!-- Chest -->
+  <xacro:property name="height_bicep" value="1" /> <!-- Bicep -->
+  <xacro:property name="height_forearm" value="1" /> <!-- Forearm -->
+  <xacro:property name="height_hand" value="1" /> <!-- Hand -->
+  <xacro:property name="camera_size" value="0.05" /> <!-- Size of square 'camera' box -->
+  <xacro:property name="axel_offset" value="0.05" /> <!-- Space btw top of beam and the each joint -->
+
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find chaosbot_description)/urdf/chaosbot.gazebo" />
+  <!-- Import Rviz colors -->
+  <xacro:include filename="$(find chaosbot_description)/urdf/materials.xacro" />
+
+  <link name="base_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1e-5" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+  <!-- Robot Chassis -->
+  <link name="chassis">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${width_chassis} ${depth_chassis} ${height_chassis}"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${width_chassis} ${depth_chassis} ${height_chassis}"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia
+	  ixx="${mass / 12.0 * (width_chassis*depth_chassis + height_chassis*height_chassis)}" ixy="0.0" ixz="0.0"
+	  iyy="${mass / 12.0 * (height_chassis*height_chassis + width_chassis*depth_chassis)}" iyz="0.0"
+	  izz="${mass / 12.0 * (width_chassis*depth_chassis + width_chassis*depth_chassis)}"/>
+    </inertial>
+  </link>
+
+  <joint name="base_link_connection" type="fixed">
+    <parent link="base_link"/>
+    <child link="chassis"/>
+    <origin xyz="0 0 ${height_chassis/2 + radius_wheel}" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+
+  <!-- Front wheel axle -->
+  <link name="front_wheelaxle">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 4.725 0"/>
+      <geometry>
+        <cylinder length="${length_wheelaxle}" radius="${radius_wheelaxle}"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 4.725 0"/>
+      <geometry>
+        <cylinder length="${length_wheelaxle}" radius="${radius_wheelaxle}"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 4.725 0"/>
+      <mass value="0" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+  <!-- Back wheel axle -->
+  <link name="back_wheelaxle">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 4.725 0"/>
+      <geometry>
+        <cylinder length="${length_wheelaxle}" radius="${radius_wheelaxle}"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 4.725 0"/>
+      <geometry>
+        <cylinder length="${length_wheelaxle}" radius="${radius_wheelaxle}"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 4.725 0"/>
+      <mass value="0" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+  <joint name="chassis_to_front_wheelaxle" type="fixed">
+    <parent link="chassis"/>
+    <child link="front_wheelaxle"/>
+    <origin xyz="0 ${depth_chassis/2} ${-height_chassis/2}" rpy="0 0 0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+  <joint name="chassis_to_back_wheelaxle" type="fixed">
+    <parent link="chassis"/>
+    <child link="back_wheelaxle"/>
+    <origin xyz="0 ${-depth_chassis/2} ${-height_chassis/2}" rpy="0 0 0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+
+
+  <!-- Front left wheel -->
+  <link name="front_left_wheel">
+    <collision>
+      <origin xyz="${width_wheel/2} 0 0" rpy="0 4.725 0"/>
+      <geometry>
+        <cylinder length="${width_wheel}" radius="${radius_wheel}"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="${width_wheel/2} 0 0" rpy="0 4.725 0"/>
+      <geometry>
+        <cylinder length="${width_wheel}" radius="${radius_wheel}"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <inertial>
+      <origin xyz="${width_wheel/2} 0 0" rpy="0 4.725 0"/>
+      <mass value="0"/>
+      <inertia
+	  ixx="0.0" ixy="0.0" ixz="0.0"
+	  iyy="0.0" iyz="0.0"
+	  izz="0.0"/>
+    </inertial>
+  </link>
+
+  <!-- Front right wheel -->
+  <link name="front_right_wheel">
+    <collision>
+      <origin xyz="${-width_wheel/2} 0 0" rpy="0 4.725 0"/>
+      <geometry>
+        <cylinder length="${width_wheel}" radius="${radius_wheel}"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="${-width_wheel/2} 0 0" rpy="0 4.725 0"/>
+      <geometry>
+        <cylinder length="${width_wheel}" radius="${radius_wheel}"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <inertial>
+      <origin xyz="${-width_wheel/2} 0 0" rpy="0 4.725 0"/>
+      <mass value="0"/>
+      <inertia
+	  ixx="0.0" ixy="0.0" ixz="0.0"
+	  iyy="0.0" iyz="0.0"
+	  izz="0.0"/>
+    </inertial>
+  </link>
+
+  <!-- Back left wheel -->
+  <link name="back_left_wheel">
+    <collision>
+      <origin xyz="${width_wheel/2} 0 0" rpy="0 4.725 0"/>
+      <geometry>
+        <cylinder length="${width_wheel}" radius="${radius_wheel}"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="${width_wheel/2} 0 0" rpy="0 4.725 0"/>
+      <geometry>
+        <cylinder length="${width_wheel}" radius="${radius_wheel}"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <inertial>
+      <origin xyz="${width_wheel/2} 0 0" rpy="0 4.725 0"/>
+      <mass value="0"/>
+      <inertia
+	  ixx="0.0" ixy="0.0" ixz="0.0"
+	  iyy="0.0" iyz="0.0"
+	  izz="0.0"/>
+    </inertial>
+  </link>
+
+  <!-- Back right wheel -->
+  <link name="back_right_wheel">
+    <collision>
+      <origin xyz="${-width_wheel/2} 0 0" rpy="0 4.725 0"/>
+      <geometry>
+        <cylinder length="${width_wheel}" radius="${radius_wheel}"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="${-width_wheel/2} 0 0" rpy="0 4.725 0"/>
+      <geometry>
+        <cylinder length="${width_wheel}" radius="${radius_wheel}"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <inertial>
+      <origin xyz="${-width_wheel/2} 0 0" rpy="0 4.725 0"/>
+      <mass value="0"/>
+      <inertia
+	  ixx="0.0" ixy="0.0" ixz="0.0"
+	  iyy="0.0" iyz="0.0"
+	  izz="0.0"/>
+    </inertial>
+  </link>
+
+<!-- Front steering and spin on wheels -->
+  <joint name="front_left_wheel_steer_spin" type="continuous">
+    <parent link="front_wheelaxle"/>
+    <child link="front_left_wheel"/>
+    <origin xyz="${length_wheelaxle/2} 0 0" rpy="0 0 0"/>
+    <axis xyz="0 -1 0"/>
+    <axis2 xyz="0 0 1"/>  
+    <dynamics damping="0.7"/>
+  </joint>
+
+  <joint name="front_right_wheel_steer_spin" type="continuous">
+    <parent link="front_wheelaxle"/>
+    <child link="front_right_wheel"/>
+    <origin xyz="${-length_wheelaxle/2} 0 0" rpy="0 0 0"/>
+    <axis xyz="0 -1 0"/>
+    <axis2 xyz="0 0 1"/>  
+    <dynamics damping="0.7"/>
+  </joint>
+
+<!-- Spin on back wheels -->
+  <joint name="back_left_wheel_spin" type="continuous">
+    <parent link="back_wheelaxle"/>
+    <child link="back_left_wheel"/>
+    <origin xyz="${length_wheelaxle/2} 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.7"/>
+  </joint>
+  <joint name="back_right_wheel_spin" type="continuous">
+    <parent link="back_wheelaxle"/>
+    <child link="back_right_wheel"/>
+    <origin xyz="${-length_wheelaxle/2} 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.7"/>
+  </joint>
+
+
+  <joint name="camera_mount_front" type="continuous">
+    <parent link="chassis"/>
+    <child link="camera_front"/>
+    <origin xyz="0 ${depth_chassis/2} ${height_chassis}" rpy="0 0 0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+
+  <!-- Front camera -->
+  <link name="camera_front">
+    <collision>
+      <origin xyz="0 0 ${-camera_size/2}" rpy="0 0 0"/>
+      <geometry>
+	<box size="${camera_size} ${camera_size} ${camera_size}"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 ${-camera_size/2}" rpy="0 0 0"/>
+      <geometry>
+	<box size="${camera_size} ${camera_size} ${camera_size}"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 ${-camera_size/2}" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <!-- generate an optical frame http://www.ros.org/reps/rep-0103.html#suffix-frames
+      so that ros and opencv can operate on the camera frame correctly -->
+  <link name="camera_front_optical">
+  </link>
+  <joint name="camera_optical_joint" type="fixed">
+    <!-- these values have to be these values otherwise the gazebo camera image
+        won't be aligned properly with the frame it is supposedly originating from -->
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    <parent link="camera_front"/>
+    <child link="camera_front_optical"/>
+  </joint>
+
+
+
+
+</robot>
