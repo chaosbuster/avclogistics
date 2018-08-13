@@ -1,0 +1,4 @@
+bool inAutonomous
+---
+int16 error
+
