@@ -1,0 +1,9 @@
+<launch>
+  <node name="joy" pkg="joy" type="joy_node" output="screen">
+  </node>
+  <node name="remote_view_startsignal" pkg="image_view" type="image_view" respawn="false" output="screen">
+    <remap from="image" to="/cam_startsignal/image_raw"/>
+    <param name="autosize" value="false" />
+  </node>
+</launch>
+
